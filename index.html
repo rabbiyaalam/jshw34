@@ -1,0 +1,148 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Web Page Features</title>  
+    <style>  
+        body { font-family: Arial, sans-serif; }  
+        .hidden { display: none; }  
+        .item-details { display: none; }  
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }  
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }  
+        th { background-color: #f2f2f2; }  
+    </style>  
+</head>  
+<body>  
+
+<h1>Signup Form</h1>  
+<form id="signupForm">  
+    <label for="name">Name:</label>  
+    <input type="text" id="name" required><br><br>  
+    <label for="email">Email:</label>  
+    <input type="email" id="email" required><br><br>  
+    <button type="submit">Sign Up</button>  
+</form>  
+
+<h2>Form Data:</h2>  
+<div id="formData"></div>  
+
+<hr>  
+
+<h1>Item Details</h1>  
+<div id="itemDetails">  
+    <p class="summary">Item summary details go here. <button onclick="toggleDetails()">Read more</button></p>  
+    <div class="item-details">Full item details are displayed here.</div>  
+</div>  
+
+<hr>  
+
+<h1>Student Details Table</h1>  
+<form id="studentForm">  
+    <label for="studentName">Student Name:</label>  
+    <input type="text" id="studentName" required><br><br>  
+    <label for="studentAge">Age:</label>  
+    <input type="number" id="studentAge" required><br><br>  
+    <button type="submit">Add Student</button>  
+</form>  
+
+<table id="studentTable">  
+    <thead>  
+        <tr>  
+            <th>Name</th>  
+            <th>Age</th>  
+            <th>Actions</th>  
+        </tr>  
+    </thead>  
+    <tbody>  
+    </tbody>  
+</table>  
+
+<div id="editForm" class="hidden">  
+    <h2>Edit Student</h2>  
+    <label for="editStudentName">Name:</label>  
+    <input type="text" id="editStudentName" required>  
+    <label for="editStudentAge">Age:</label>  
+    <input type="number" id="editStudentAge" required>  
+    <button id="saveEdit">Save</button>  
+    <button id="cancelEdit">Cancel</button>  
+</div>  
+
+<script>  
+    // 1. Signup Form - Display Data  
+    document.getElementById('signupForm').addEventListener('submit', function (e) {  
+        e.preventDefault();  
+        const name = document.getElementById('name').value;  
+        const email = document.getElementById('email').value;  
+        document.getElementById('formData').innerHTML = `<p>Name: ${name}<br>Email: ${email}</p>`;  
+        this.reset();  
+    });  
+
+    // 2. Read More Button  
+    function toggleDetails() {  
+        const details = document.querySelector(".item-details");  
+        details.style.display = details.style.display === "none" ? "block" : "none";  
+    }  
+
+    // 3. Student Details Table  
+    const studentList = [];  
+    let editIndex;  
+
+    document.getElementById('studentForm').addEventListener('submit', function (e) {  
+        e.preventDefault();  
+        const studentName = document.getElementById('studentName').value;  
+        const studentAge = document.getElementById('studentAge').value;  
+        addStudent(studentName, studentAge);  
+        this.reset();  
+    });  
+
+    function addStudent(name, age) {  
+        studentList.push({ name, age });  
+        renderStudentTable();  
+    }  
+
+    function renderStudentTable() {  
+        const tbody = document.querySelector('#studentTable tbody');  
+        tbody.innerHTML = '';  
+        studentList.forEach((student, index) => {  
+            tbody.innerHTML += `  
+                <tr>  
+                    <td>${student.name}</td>  
+                    <td>${student.age}</td>  
+                    <td>  
+                        <button onclick="editStudent(${index})">Edit</button>  
+                        <button onclick="deleteStudent(${index})">Delete</button>  
+                    </td>  
+                </tr>  
+            `;  
+        });  
+    }  
+
+    function deleteStudent(index) {  
+        studentList.splice(index, 1);  
+        renderStudentTable();  
+    }  
+
+    function editStudent(index) {  
+        editIndex = index;  
+        const student = studentList[index];  
+        document.getElementById('editStudentName').value = student.name;  
+        document.getElementById('editStudentAge').value = student.age;  
+        document.getElementById('editForm').classList.remove('hidden');  
+    }  
+
+    document.getElementById('saveEdit').addEventListener('click', function () {  
+        const updatedName = document.getElementById('editStudentName').value;  
+        const updatedAge = document.getElementById('editStudentAge').value;  
+        studentList[editIndex] = { name: updatedName, age: updatedAge };  
+        renderStudentTable();  
+        document.getElementById('editForm').classList.add('hidden');  
+    });  
+
+    document.getElementById('cancelEdit').addEventListener('click', function () {  
+        document.getElementById('editForm').classList.add('hidden');  
+    });  
+</script>  
+
+</body>  
+</html>
